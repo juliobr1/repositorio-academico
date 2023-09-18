@@ -33,7 +33,7 @@ struct Coord {
 
 int main(){
   //Ler o arquivo
-  FILE* file_in = fopen("L0Q1.in","r");
+  FILE* file_in = fopen("../L0Q1.in","r");
   FILE* file_out = fopen("L0Q1.out","w");
 
   if(file_in == NULL || file_out == NULL){
