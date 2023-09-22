@@ -49,31 +49,16 @@ struct auxiliar {
     float distancia;
 };
 
- /*
-int ordenarstring(const void *a, const void *b){
-    int counta = 0;
-    int countb = 0;
-    char key[100];
-    char alf[26] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','x','w','y','z'};
-    char alfb[26] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','X','W','Y','Z'};
+void ordenarstring(const void *a, const void *b){
+    chat aux[100];
+    int r = strcmp(a, b);
 
-    for (int i = 0, i <= 26 && counta == countb, i++){
-        if ((const char *)a[i] == alf[i] || (const char *)a[i] == alfb[i])
-            counta++;
-        if ((const char *)b[i] == alf[i] || (const char *)b[i] == alfb[i])
-            countb++;
-        if (counta > countb)
-            strncpy(key, (const char *)a, sizeof(key));
-            strncpy((const char *)a, (const char *)b, sizeof((const char *)a));
-            strncpy((const char *)b, key, sizeof((const char *)b));
-        
-        if (counta < countb)
-            strncpy(key, (const char *)a, sizeof(key));
-            strncpy((const char *)a, (const char *)b, sizeof((const char *)a));
-            strncpy((const char *)b, key, sizeof((const char *)b));
+    if(r > 0){
+        strcpy(aux, a);
+        strcpy(a, b);
+        strcpy(b, aux);
     }
 }
-*/
 
 int main() {
     FILE* file_in = fopen("L0Q2.in","r");
@@ -116,6 +101,15 @@ int main() {
             token = strtok(NULL, " ");
         }
     
+    //fazer ordenacao de strings aqui
+
+
+
+    //fazer ordenacao de coordenadas aqui
+
+
+
+
     printf("str: ");
     for (int i = 0; i < texto_count; i++){
         printf("%s ", aux[i].texto);
