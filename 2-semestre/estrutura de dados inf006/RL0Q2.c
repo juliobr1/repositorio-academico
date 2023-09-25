@@ -49,8 +49,15 @@ struct auxiliar {
     float distancia;
 };
 
-void ordenarstring(const void *a, const void *b){
-    chat aux[100];
+struct Coord {
+    float x;
+    float y;
+    float distance;
+};
+
+/*
+void ordenarstring(const char *a, const char *b){
+    char aux[100];
     int r = strcmp(a, b);
 
     if(r > 0){
@@ -59,6 +66,7 @@ void ordenarstring(const void *a, const void *b){
         strcpy(b, aux);
     }
 }
+*/
 
 int main() {
     FILE* file_in = fopen("L0Q2.in","r");
@@ -75,62 +83,136 @@ int main() {
     char * line = malloc(MAX_LINE * sizeof(char));
 
     //while vem aqui
-    fgets(line, MAX_LINE, file_in);
+    while (fgets(line, MAX_LINE, file_in)){
 
-    struct auxiliar aux[100];
-    int texto_count = 0;
-    int inteiro_count = 0;
-    int flutuante_count = 0;
-    int ponto_count = 0;
+        struct auxiliar aux[100];
+        int texto_count = 0;
+        int inteiro_count = 0;
+        int flutuante_count = 0;
+        int ponto_count = 0;
 
-    char * token = strtok(line, " ");
-        while (token != NULL) {
-            if (isCoordinate(token)) {
-                strncpy(aux[ponto_count].ponto, token, sizeof(aux[ponto_count].ponto));
-                ponto_count++;
-            } else if (isInt(token)) {
-                strncpy(aux[inteiro_count].inteiro, token, sizeof(aux[inteiro_count].inteiro));
-                inteiro_count++;
-            } else if (isFloat(token)) {
-                strncpy(aux[flutuante_count].flutuante, token, sizeof(aux[flutuante_count].flutuante));
-                flutuante_count++;
-            } else {
-                strncpy(aux[texto_count].texto, token, sizeof(aux[texto_count].texto));
-                texto_count++;
+        char * token = strtok(line, " ");
+            while (token != NULL) {
+                if (isCoordinate(token)) {
+                    strcpy(aux[ponto_count].ponto, token);
+                    ponto_count++;
+                } else if (isInt(token)) {
+                    strcpy(aux[inteiro_count].inteiro, token);
+                    inteiro_count++;
+                } else if (isFloat(token)) {
+                    strcpy(aux[flutuante_count].flutuante, token);
+                    flutuante_count++;
+                } else {
+                    strcpy(aux[texto_count].texto, token);
+                    texto_count++;
+                }
+                token = strtok(NULL, " ");
             }
-            token = strtok(NULL, " ");
+        
+        //fazer ordenacao de strings aqui
+        for (int i = 0; i < texto_count; i++){
+            char key[80];
+            strcpy(key, aux[i].texto);
+            int j = i - 1;
+            while (j >= 0 && strcmp(aux[j+1].texto, aux[j].texto) < 0){
+                strcpy(aux[j+1].texto, aux[j].texto);
+                j--;
+            }
+            strcpy(aux[j+1].texto, key);
         }
-    
-    //fazer ordenacao de strings aqui
+
+    // ordenacao inteiro
+        int inteiro[80];
+
+        for (int i = 0; i < inteiro_count; i++){
+            inteiro[i] = atoi(aux[i].inteiro);
+        }
+
+        for (int i = 0; i < inteiro_count; i++){
+            int key = inteiro[i];
+            int j = i - 1;
+            while (j >= 0 && inteiro[j] > key){
+                inteiro[j+1] = inteiro[j];
+                j--;
+            }
+            inteiro[j+1] = key;
+        }
+
+    // ordenacao flutuante
+        float flutuante[80];
+
+        for (int i = 0; i < inteiro_count; i++){
+            flutuante[i] = atof(aux[i].flutuante);
+        }
+
+        for (int i = 1; i < inteiro_count; i++){
+            float keyf = flutuante[i];
+            int j = i - 1;
+            while (j >= 0 && flutuante[j] > keyf){
+                flutuante[j+1] = flutuante[j];
+                j--;
+            }
+            flutuante[j+1] = keyf;
+        }
 
 
+        //fazer ordenacao de coordenadas aqui
+        struct Coord coordenadas[100];
+        struct Coord auxiliarponto;
 
-    //fazer ordenacao de coordenadas aqui
+        for (int i = 0; i < ponto_count; i++){
+            sscanf(aux[i].ponto, "(%f, %f)", &auxiliarponto.x, &auxiliarponto.y);
+            coordenadas[i] = auxiliarponto;
+        }
+
+        for(int i = 0; i < ponto_count; i++)
+            coordenadas[i].distance = distanciazero(coordenadas[i].x, coordenadas[i].y);
+        
+        for(int i = 1; i < ponto_count; i++){
+            float key = coordenadas[i].distance;
+            float keyX = coordenadas[i].x;
+            float keyY = coordenadas[i].y;
+            int j = i - 1;
+            while (j >= 0 && coordenadas[j].distance > key){
+                coordenadas[j+1].distance = coordenadas[j].distance;
+                coordenadas[j+1].x = coordenadas[j].x;
+                coordenadas[j+1].y = coordenadas[j].y;
+                j = j - 1;
+            }
+            coordenadas[j+1].distance = key;
+            coordenadas[j+1].x = keyX;
+            coordenadas[j+1].y = keyY;
+            }
 
 
+        fprintf(file_out, "str:");
+        for (int i = 0; i < texto_count; i++){
+            fprintf(file_out, "%s ", aux[i].texto);
+        }
 
+        fprintf(file_out, "int:");
+        for (int i = 0; i < inteiro_count; i++){
+            fprintf(file_out, "%d ", inteiro[i]);
+        }
 
-    printf("str: ");
-    for (int i = 0; i < texto_count; i++){
-        printf("%s ", aux[i].texto);
+        fprintf(file_out, "float:");
+        for (int i = 0; i < flutuante_count; i++){
+            fprintf(file_out, "%.1f ", flutuante[i]);
+        }
+
+        fprintf(file_out, "p:");
+        for (int i = 0; i < ponto_count; i++){
+            fprintf(file_out, "(%.1f, %.1f) ", coordenadas[i].x, coordenadas[i].y);
+        }
+
+        if (!feof(file_in))
+            fprintf(file_out, "\n");
     }
-
-    printf("int: ");
-    for (int i = 0; i < inteiro_count; i++){
-        printf("%s ", aux[i].inteiro);
-    }
-
-    printf("float: ");
-    for (int i = 0; i < flutuante_count; i++){
-        printf("%s ", aux[i].flutuante);
-    }
-
-    printf("p: ");
-    for (int i = 0; i < ponto_count; i++){
-        printf("%s ", aux[i].ponto);
-    }
+//fechar while do arquivo aqui
 
     fclose(file_in);
     fclose(file_out);
+
+    printf("Arquivos fechados com sucesso!");
 
 }
